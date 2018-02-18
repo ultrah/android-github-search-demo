@@ -4,43 +4,54 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.example.githubbrowser.model.GithubRepo;
+import com.example.githubbrowser.model.local.GithubRepoDisplayItem;
+import com.example.githubbrowser.model.network.github.SearchResult;
+import com.example.githubbrowser.model.network.github.SearchResultItem;
+import com.example.githubbrowser.network.GithubNetworkRepository;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-
-import timber.log.Timber;
 
 public class GithubListViewModel extends AndroidViewModel {
 
-    private MutableLiveData<List<GithubRepo>> mGithubRepos;
+    private final GithubNetworkRepository mGithubRepository;
+    private MutableLiveData<List<GithubRepoDisplayItem>> mGithubRepos;
 
     public GithubListViewModel(@NonNull Application application) {
         super(application);
+
+        //TODO injection
+        mGithubRepository = new GithubNetworkRepository();
     }
 
-    public MutableLiveData<List<GithubRepo>> getGithubRepos() {
+    public MutableLiveData<List<GithubRepoDisplayItem>> getGithubRepos() {
         if (mGithubRepos == null) {
             mGithubRepos = new MutableLiveData<>();
         }
         return mGithubRepos;
     }
 
-    public void fetchData() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    public void searchRepos(String keywords) {
+        // TODO retain search string
 
-                Timber.d("fetchData() - Sending data");
+       mGithubRepository.search(keywords, new GithubNetworkRepository.ResponseListener<SearchResult>() {
 
-                mGithubRepos.setValue(Collections.EMPTY_LIST);
-            }
-        }).run();
+           @Nullable
+           @Override
+           public void onResponse(SearchResult result) {
+               //TODO null check
+               // TODO extract to static logic method
+               List<SearchResultItem> searchResultItems = result.getItems();
+               List<GithubRepoDisplayItem> displayItems = new ArrayList<>(searchResultItems.size());
+
+               for(SearchResultItem item : searchResultItems) {
+                   displayItems.add(new GithubRepoDisplayItem(item.getName()));
+               }
+
+               mGithubRepos.setValue(displayItems);
+           }
+       });
     }
 }

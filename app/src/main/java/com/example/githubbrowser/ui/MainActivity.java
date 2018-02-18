@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.example.githubbrowser.R;
-import com.example.githubbrowser.model.GithubRepo;
+import com.example.githubbrowser.model.local.GithubRepoDisplayItem;
 import com.example.githubbrowser.viewmodel.GithubListViewModel;
 
 import java.util.List;
@@ -28,11 +28,11 @@ public class MainActivity extends AppCompatActivity {
         mModel = ViewModelProviders.of(this).get(GithubListViewModel.class);
 
         // Create the observer which updates the UI.
-        final Observer repoObserver = new Observer<List<GithubRepo>>() {
+        final Observer repoObserver = new Observer<List<GithubRepoDisplayItem>>() {
 
             @Override
-            public void onChanged(@Nullable List<GithubRepo> githubRepos) {
-                Timber.d("onChanged()");
+            public void onChanged(@Nullable List<GithubRepoDisplayItem> githubRepos) {
+                Timber.d("onChanged() " + githubRepos);
                 //TODO update UI
             }
         };
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_do_the_thing).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mModel.fetchData();
+                mModel.searchRepos("Foobar");
             }
         });
     }

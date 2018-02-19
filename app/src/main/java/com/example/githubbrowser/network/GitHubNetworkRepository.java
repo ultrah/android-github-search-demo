@@ -13,19 +13,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class GitHubNetworkRepository {
 
     public static final String BASE_URL = "https://api.github.com/";
+    private GitHubService mService;
 
     //TODO set accept header
-
     public void search(String keywords, final ResponseListener<SearchResult> responseListener) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+        if(mService == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
 
-                .build();
+                    .build();
 
-        GitHubService service = retrofit.create(GitHubService.class);
+            mService = retrofit.create(GitHubService.class);
+        }
 
-        service.search(keywords).enqueue(new Callback<SearchResult>() {
+        mService.search(keywords).enqueue(new Callback<SearchResult>() {
             @Override
             public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
                 responseListener.onResponse(response.body());

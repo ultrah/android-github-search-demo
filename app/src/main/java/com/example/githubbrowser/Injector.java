@@ -6,12 +6,12 @@ import com.example.githubbrowser.viewmodel.ViewModelFactory;
 
 public class Injector {
 
-    public static ViewModelFactory provideViewModelFactory() {
+    public ViewModelFactory provideViewModelFactory() {
         GitHubRepository dataSource = provideGitHubRepository();
         return new ViewModelFactory(dataSource);
     }
 
-    public static GitHubRepository provideGitHubRepository() {
+    public GitHubRepository provideGitHubRepository() {
         return GitHubNetworkRepository.getInstance();
     }
 

@@ -10,7 +10,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class GithubNetworkRepository {
+public class GitHubNetworkRepository {
 
     public static final String BASE_URL = "https://api.github.com/";
 

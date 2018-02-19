@@ -6,37 +6,37 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.example.githubbrowser.model.local.GithubRepoDisplayItem;
+import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
 import com.example.githubbrowser.model.network.github.SearchResult;
 import com.example.githubbrowser.model.network.github.SearchResultItem;
-import com.example.githubbrowser.network.GithubNetworkRepository;
+import com.example.githubbrowser.network.GitHubNetworkRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GithubListViewModel extends AndroidViewModel {
+public class GitHubListViewModel extends AndroidViewModel {
 
-    private final GithubNetworkRepository mGithubRepository;
-    private MutableLiveData<List<GithubRepoDisplayItem>> mGithubRepos;
+    private final GitHubNetworkRepository mGithubRepository;
+    private MutableLiveData<List<GitHubRepoDisplayItem>> mGitHubRepos;
 
-    public GithubListViewModel(@NonNull Application application) {
+    public GitHubListViewModel(@NonNull Application application) {
         super(application);
 
         //TODO injection
-        mGithubRepository = new GithubNetworkRepository();
+        mGithubRepository = new GitHubNetworkRepository();
     }
 
-    public MutableLiveData<List<GithubRepoDisplayItem>> getGithubRepos() {
-        if (mGithubRepos == null) {
-            mGithubRepos = new MutableLiveData<>();
+    public MutableLiveData<List<GitHubRepoDisplayItem>> getGitHubRepos() {
+        if (mGitHubRepos == null) {
+            mGitHubRepos = new MutableLiveData<>();
         }
-        return mGithubRepos;
+        return mGitHubRepos;
     }
 
     public void searchRepos(String keywords) {
         // TODO retain search string
 
-       mGithubRepository.search(keywords, new GithubNetworkRepository.ResponseListener<SearchResult>() {
+       mGithubRepository.search(keywords, new GitHubNetworkRepository.ResponseListener<SearchResult>() {
 
            @Nullable
            @Override
@@ -44,13 +44,13 @@ public class GithubListViewModel extends AndroidViewModel {
                //TODO null check
                // TODO extract to static logic method
                List<SearchResultItem> searchResultItems = result.getItems();
-               List<GithubRepoDisplayItem> displayItems = new ArrayList<>(searchResultItems.size());
+               List<GitHubRepoDisplayItem> displayItems = new ArrayList<>(searchResultItems.size());
 
                for(SearchResultItem item : searchResultItems) {
-                   displayItems.add(new GithubRepoDisplayItem(item.getName()));
+                   displayItems.add(new GitHubRepoDisplayItem(item.getName()));
                }
 
-               mGithubRepos.setValue(displayItems);
+               mGitHubRepos.setValue(displayItems);
            }
        });
     }

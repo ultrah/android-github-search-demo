@@ -1,10 +1,10 @@
 package com.example.githubbrowser.model.local;
 
-public class GithubRepoDisplayItem {
+public class GitHubRepoDisplayItem {
 
     private String name;
 
-    public GithubRepoDisplayItem(String name) {
+    public GitHubRepoDisplayItem(String name) {
         this.name = name;
     }
 

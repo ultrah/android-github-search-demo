@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.example.githubbrowser.logic.SearchResultConverter;
 import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
 import com.example.githubbrowser.model.network.github.SearchResult;
 import com.example.githubbrowser.model.network.github.SearchResultItem;
@@ -42,14 +43,8 @@ public class GitHubListViewModel extends AndroidViewModel {
            @Override
            public void onResponse(SearchResult result) {
                //TODO null check
-               // TODO extract to static logic method
                List<SearchResultItem> searchResultItems = result.getItems();
-               List<GitHubRepoDisplayItem> displayItems = new ArrayList<>(searchResultItems.size());
-
-               for(SearchResultItem item : searchResultItems) {
-                   displayItems.add(new GitHubRepoDisplayItem(item.getName()));
-               }
-
+               List<GitHubRepoDisplayItem> displayItems = SearchResultConverter.convert(searchResultItems);
                mGitHubRepos.setValue(displayItems);
            }
        });

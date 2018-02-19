@@ -4,9 +4,9 @@ import android.app.Application;
 
 import timber.log.Timber;
 
-public class AppApp extends Application {
+public class ThisApp extends Application {
 
-    private static AppApp sInstance;
+    private static ThisApp sInstance;
 
     @Override
     public void onCreate() {
@@ -17,7 +17,7 @@ public class AppApp extends Application {
         Timber.plant(new Timber.DebugTree());
     }
 
-    public static AppApp getInstance() {
+    public static ThisApp getInstance() {
         return sInstance;
     }
 }

@@ -1,14 +1,20 @@
 package com.example.githubbrowser.model.network.github;
 
+import com.google.gson.annotations.SerializedName;
+
 public class SearchResultItem {
 
     private long id;
     private String name;
+    private int watchers;
+    private int stargazers_count;
+    private int forks;
     private Owner owner;
 
     public class Owner {
 
         private long id;
+        @SerializedName("avatar_url")
         private String avatarUrl;
 
         public long getId() {
@@ -42,6 +48,30 @@ public class SearchResultItem {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getWatchers() {
+        return watchers;
+    }
+
+    public void setWatchers(int watchers) {
+        this.watchers = watchers;
+    }
+
+    public int getStargazers_count() {
+        return stargazers_count;
+    }
+
+    public void setStargazers_count(int stargazers_count) {
+        this.stargazers_count = stargazers_count;
+    }
+
+    public int getForks() {
+        return forks;
+    }
+
+    public void setForks(int forks) {
+        this.forks = forks;
     }
 
     public Owner getOwner() {

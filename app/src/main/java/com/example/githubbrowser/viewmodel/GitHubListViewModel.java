@@ -12,7 +12,6 @@ import com.example.githubbrowser.model.network.github.SearchResult;
 import com.example.githubbrowser.model.network.github.SearchResultItem;
 import com.example.githubbrowser.network.GitHubNetworkRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GitHubListViewModel extends AndroidViewModel {
@@ -37,16 +36,16 @@ public class GitHubListViewModel extends AndroidViewModel {
     public void searchRepos(String keywords) {
         // TODO retain search string
 
-       mGithubRepository.search(keywords, new GitHubNetworkRepository.ResponseListener<SearchResult>() {
+        mGithubRepository.search(keywords, new GitHubNetworkRepository.ResponseListener<SearchResult>() {
 
-           @Nullable
-           @Override
-           public void onResponse(SearchResult result) {
-               //TODO null check
-               List<SearchResultItem> searchResultItems = result.getItems();
-               List<GitHubRepoDisplayItem> displayItems = SearchResultConverter.convert(searchResultItems);
-               mGitHubRepos.setValue(displayItems);
-           }
-       });
+            @Nullable
+            @Override
+            public void onResponse(SearchResult result) {
+                //TODO null check
+                List<SearchResultItem> searchResultItems = result.getItems();
+                List<GitHubRepoDisplayItem> displayItems = SearchResultConverter.convert(searchResultItems);
+                mGitHubRepos.setValue(displayItems);
+            }
+        });
     }
 }

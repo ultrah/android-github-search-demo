@@ -1,7 +1,5 @@
 package com.example.githubbrowser.network;
 
-import android.support.annotation.Nullable;
-
 import com.example.githubbrowser.model.network.github.SearchResult;
 
 import retrofit2.Call;
@@ -10,14 +8,17 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class GitHubNetworkRepository {
+public class GitHubNetworkRepository implements GitHubRepository {
 
     public static final String BASE_URL = "https://api.github.com/";
+    private static GitHubNetworkRepository sInstance;
+
     private GitHubService mService;
 
     //TODO set accept header
+    @Override
     public void search(String keywords, final ResponseListener<SearchResult> responseListener) {
-        if(mService == null) {
+        if (mService == null) {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -40,10 +41,10 @@ public class GitHubNetworkRepository {
         });
     }
 
-    public interface ResponseListener<T> {
-
-        @Nullable
-        void onResponse(T result);
+    public static GitHubRepository getInstance() {
+        if (sInstance == null) {
+            sInstance = new GitHubNetworkRepository();
+        }
+        return sInstance;
     }
-
 }

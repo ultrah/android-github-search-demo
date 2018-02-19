@@ -1,29 +1,26 @@
 package com.example.githubbrowser.viewmodel;
 
-import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
+import android.arch.lifecycle.ViewModel;
 import android.support.annotation.Nullable;
 
 import com.example.githubbrowser.logic.SearchResultConverter;
 import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
 import com.example.githubbrowser.model.network.github.SearchResult;
 import com.example.githubbrowser.model.network.github.SearchResultItem;
-import com.example.githubbrowser.network.GitHubNetworkRepository;
+import com.example.githubbrowser.network.GitHubRepository;
+import com.example.githubbrowser.network.ResponseListener;
 
 import java.util.List;
 
-public class GitHubListViewModel extends AndroidViewModel {
+public class GitHubListViewModel extends ViewModel {
 
-    private final GitHubNetworkRepository mGithubRepository;
+    private final GitHubRepository mGithubRepository;
     private MutableLiveData<List<GitHubRepoDisplayItem>> mGitHubRepos;
 
-    public GitHubListViewModel(@NonNull Application application) {
-        super(application);
-
-        //TODO injection
-        mGithubRepository = new GitHubNetworkRepository();
+    public GitHubListViewModel(GitHubRepository gitHubRepository) {
+        super();
+        mGithubRepository = gitHubRepository;
     }
 
     public MutableLiveData<List<GitHubRepoDisplayItem>> getGitHubRepos() {
@@ -36,7 +33,7 @@ public class GitHubListViewModel extends AndroidViewModel {
     public void searchRepos(String keywords) {
         // TODO retain search string
 
-        mGithubRepository.search(keywords, new GitHubNetworkRepository.ResponseListener<SearchResult>() {
+        mGithubRepository.search(keywords, new ResponseListener<SearchResult>() {
 
             @Nullable
             @Override

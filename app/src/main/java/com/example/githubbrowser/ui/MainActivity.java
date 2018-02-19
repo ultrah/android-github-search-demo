@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.githubbrowser.Injector;
 import com.example.githubbrowser.R;
 import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
 import com.example.githubbrowser.viewmodel.GitHubListViewModel;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Get the ViewModel.
-        mModel = ViewModelProviders.of(this).get(GitHubListViewModel.class);
+        mModel = ViewModelProviders.of(this, Injector.provideViewModelFactory()).get(GitHubListViewModel.class);
 
         // Create the observer which updates the UI.
         final Observer repoObserver = new Observer<List<GitHubRepoDisplayItem>>() {

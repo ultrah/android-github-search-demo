@@ -9,7 +9,6 @@ import java.util.List;
 public class SearchResultConverter {
 
     public static List<GitHubRepoDisplayItem> convert(List<SearchResultItem> searchResultItems) {
-        // TODO Unit tests!
         ArrayList<GitHubRepoDisplayItem> displayItems = new ArrayList<>();
 
         for(SearchResultItem item : searchResultItems) {
@@ -23,8 +22,6 @@ public class SearchResultConverter {
     }
 
     private static int calculateScore(SearchResultItem item) {
-        // TODO unit tests!
-        // TODO use a more sophisticated algorithm
         return item.getWatchers() * item.getStargazers_count() * item.getForks();
     }
 }

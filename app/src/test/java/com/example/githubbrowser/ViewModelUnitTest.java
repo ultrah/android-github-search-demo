@@ -41,7 +41,7 @@ public class ViewModelUnitTest {
 
         GitHubListViewModel viewModel = new GitHubListViewModel(mockRepo);
         Observer<List<GitHubRepoDisplayItem>> mockObserver = mock(Observer.class);
-        viewModel.getGitHubRepos().observeForever(mockObserver);
+        viewModel.getDisplayItems().observeForever(mockObserver);
         viewModel.searchRepos("Foobar");
         verify(mockObserver).onChanged(any(List.class));
     }

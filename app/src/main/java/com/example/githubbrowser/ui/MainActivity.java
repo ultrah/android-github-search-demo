@@ -8,10 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.githubbrowser.AppApp;
-import com.example.githubbrowser.Injector;
 import com.example.githubbrowser.R;
 import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
 import com.example.githubbrowser.viewmodel.GitHubListViewModel;
@@ -24,57 +24,75 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
-    private TextView mTvLoading;
+    private TextView mTvStatus;
+    private View mBtnSearch;
+    private EditText mEditSearch;
 
-    private GitHubListViewModel mModel;
     private LinearLayoutManager mLayoutManager;
     private GitHubRepoItemAdapter mAdapter;
+    private GitHubListViewModel mModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mTvStatus = findViewById(R.id.tv_status);
+        mBtnSearch = findViewById(R.id.btn_search);
+        mEditSearch = findViewById(R.id.edit_keywords);
+        mRecyclerView = findViewById(R.id.container_recycler);
+
         // Get the ViewModel.
         mModel = ViewModelProviders.of(this, AppApp.getInjector().provideViewModelFactory()).get(GitHubListViewModel.class);
 
-        // Create the observer which updates the UI.
-        final Observer repoObserver = new Observer<List<GitHubRepoDisplayItem>>() {
+        mModel.getBasicState().observe(this, new Observer<GitHubListViewModel.BasicState>() {
 
-            @Override
+            public void onChanged(@Nullable GitHubListViewModel.BasicState basicState) {
+                switch (basicState.getState()) {
+                    case IDLE:
+                        mTvStatus.setVisibility(View.GONE);
+                        mRecyclerView.setVisibility(View.GONE);
+                        mEditSearch.setText("");
+                        break;
+                    case SEARCHING:
+                        mTvStatus.setVisibility(View.VISIBLE);
+                        mRecyclerView.setVisibility(View.GONE);
+                        mEditSearch.setText(basicState.getKeywords());
+                        break;
+                    case DISPLAYING:
+                        mTvStatus.setVisibility(View.GONE);
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                        mEditSearch.setText(basicState.getKeywords());
+                        break;
+                    case ERROR:
+                        //TODO HANDLE ERROR STATE
+                    default:
+                        throw new IllegalStateException("Unknown state");
+                }
+            }
+        });
+
+        mModel.getDisplayItems().observe(this, new Observer<List<GitHubRepoDisplayItem>>() {
+
             public void onChanged(@Nullable List<GitHubRepoDisplayItem> gitHubRepos) {
                 Timber.d("onChanged() -> %s", gitHubRepos.size());
                 onItemsReceived(gitHubRepos);
             }
-        };
+        });
 
-        mModel.getGitHubRepos().observe(this, repoObserver);
-
-        mTvLoading = findViewById(R.id.tv_loading);
-
-        findViewById(R.id.btn_do_the_thing).setOnClickListener(new View.OnClickListener() {
+        mBtnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mRecyclerView.getVisibility() == View.GONE) {
-                    mTvLoading.setVisibility(View.VISIBLE);
-                }
-                mModel.searchRepos("Foobar");
+                mModel.searchRepos(mEditSearch.getText().toString());
             }
         });
 
-        mRecyclerView = findViewById(R.id.container_recycler);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
 
         mAdapter = new GitHubRepoItemAdapter(Collections.<GitHubRepoDisplayItem>emptyList());
         mRecyclerView.setAdapter(mAdapter);
-
     }
 
     private void onItemsReceived(List<GitHubRepoDisplayItem> gitHubRepos) {
@@ -83,6 +101,6 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.setItems(gitHubRepos);
         mAdapter.notifyDataSetChanged();
         mRecyclerView.setVisibility(View.VISIBLE);
-        mTvLoading.setVisibility(View.GONE);
+        mTvStatus.setVisibility(View.GONE);
     }
 }

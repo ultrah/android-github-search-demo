@@ -13,25 +13,73 @@ import com.example.githubbrowser.network.ResponseListener;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class GitHubListViewModel extends ViewModel {
 
+    public enum State {
+        IDLE,
+        SEARCHING,
+        DISPLAYING,
+        ERROR
+    }
+
+    // TODO immutable class (easier with Kotlin data class)
+    public class BasicState {
+
+        State mState;
+        String mKeywords;
+
+        public State getState() {
+            return mState;
+        }
+
+        public BasicState setState(State state) {
+            mState = state;
+            return this;
+        }
+
+        public String getKeywords() {
+            return mKeywords;
+        }
+
+        public BasicState setKeywords(String keywords) {
+            mKeywords = keywords;
+            return this;
+        }
+    }
+
     private final GitHubRepository mGithubRepository;
-    private MutableLiveData<List<GitHubRepoDisplayItem>> mGitHubRepos;
+
+    private MutableLiveData<List<GitHubRepoDisplayItem>> mDisplayItems;
+    private MutableLiveData<BasicState> mState;
 
     public GitHubListViewModel(GitHubRepository gitHubRepository) {
         super();
         mGithubRepository = gitHubRepository;
+        mState = new MutableLiveData<>();
+        mState.setValue(new BasicState().setState(State.IDLE));
     }
 
-    public MutableLiveData<List<GitHubRepoDisplayItem>> getGitHubRepos() {
-        if (mGitHubRepos == null) {
-            mGitHubRepos = new MutableLiveData<>();
+    public MutableLiveData<List<GitHubRepoDisplayItem>> getDisplayItems() {
+        if (mDisplayItems == null) {
+            mDisplayItems = new MutableLiveData<>();
         }
-        return mGitHubRepos;
+        return mDisplayItems;
+    }
+
+    public MutableLiveData<BasicState> getBasicState() {
+
+        return mState;
     }
 
     public void searchRepos(String keywords) {
-        // TODO retain search string
+        if (keywords.isEmpty()) {
+            Timber.d("Nothing to do here");
+            return;
+        }
+
+        mState.setValue(mState.getValue().setKeywords(keywords).setState(State.SEARCHING));
 
         mGithubRepository.search(keywords, new ResponseListener<SearchResult>() {
 
@@ -41,7 +89,8 @@ public class GitHubListViewModel extends ViewModel {
                 //TODO null check
                 List<SearchResultItem> searchResultItems = result.getItems();
                 List<GitHubRepoDisplayItem> displayItems = SearchResultConverter.convert(searchResultItems);
-                mGitHubRepos.setValue(displayItems);
+                mDisplayItems.setValue(displayItems);
+                mState.setValue(mState.getValue().setState(State.DISPLAYING));
             }
         });
     }

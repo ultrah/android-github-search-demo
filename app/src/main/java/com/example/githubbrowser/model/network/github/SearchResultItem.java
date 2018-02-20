@@ -11,7 +11,7 @@ public class SearchResultItem {
     private int forks;
     private Owner owner;
 
-    public class Owner {
+    public static class Owner {
 
         private long id;
         @SerializedName("avatar_url")

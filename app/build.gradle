@@ -50,6 +50,8 @@ dependencies {
 
     // Testing
 
+    testCompile 'org.mockito:mockito-core:1.10.19'
+
     // Test helpers for LiveData
     testImplementation "android.arch.core:core-testing:1.1.0"
 

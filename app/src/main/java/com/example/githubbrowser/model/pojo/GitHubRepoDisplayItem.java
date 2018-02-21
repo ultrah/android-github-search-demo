@@ -1,4 +1,4 @@
-package com.example.githubbrowser.model.local;
+package com.example.githubbrowser.model.pojo;
 
 public class GitHubRepoDisplayItem {
 

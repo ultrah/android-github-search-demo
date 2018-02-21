@@ -3,11 +3,11 @@ package com.example.githubbrowser;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 
-import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
-import com.example.githubbrowser.model.network.github.SearchResult;
-import com.example.githubbrowser.model.network.github.SearchResultItem;
-import com.example.githubbrowser.network.GitHubRepository;
-import com.example.githubbrowser.network.ResponseListener;
+import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
+import com.example.githubbrowser.model.network.pojo.SearchResult;
+import com.example.githubbrowser.model.network.pojo.SearchResultItem;
+import com.example.githubbrowser.model.network.GitHubRepository;
+import com.example.githubbrowser.model.network.ResponseListener;
 import com.example.githubbrowser.viewmodel.GitHubListViewModel;
 
 import org.junit.Rule;

@@ -1,7 +1,7 @@
-package com.example.githubbrowser.logic;
+package com.example.githubbrowser.model.logic;
 
-import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
-import com.example.githubbrowser.model.network.github.SearchResultItem;
+import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
+import com.example.githubbrowser.model.network.pojo.SearchResultItem;
 
 import java.util.ArrayList;
 import java.util.List;

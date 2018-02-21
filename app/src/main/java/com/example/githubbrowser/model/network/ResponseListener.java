@@ -1,4 +1,4 @@
-package com.example.githubbrowser.network;
+package com.example.githubbrowser.model.network;
 
 import android.support.annotation.Nullable;
 

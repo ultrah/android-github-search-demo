@@ -4,12 +4,12 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.Nullable;
 
-import com.example.githubbrowser.logic.SearchResultConverter;
-import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
-import com.example.githubbrowser.model.network.github.SearchResult;
-import com.example.githubbrowser.model.network.github.SearchResultItem;
-import com.example.githubbrowser.network.GitHubRepository;
-import com.example.githubbrowser.network.ResponseListener;
+import com.example.githubbrowser.model.logic.SearchResultConverter;
+import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
+import com.example.githubbrowser.model.network.pojo.SearchResult;
+import com.example.githubbrowser.model.network.pojo.SearchResultItem;
+import com.example.githubbrowser.model.network.GitHubRepository;
+import com.example.githubbrowser.model.network.ResponseListener;
 
 import java.util.List;
 

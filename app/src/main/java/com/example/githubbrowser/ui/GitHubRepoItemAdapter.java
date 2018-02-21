@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.githubbrowser.R;
-import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
+import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
 import com.example.githubbrowser.util.GlideApp;
 
 import java.util.List;

@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.example.githubbrowser.AppApp;
 import com.example.githubbrowser.R;
-import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
+import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
 import com.example.githubbrowser.viewmodel.GitHubListViewModel;
 
 import java.util.Collections;

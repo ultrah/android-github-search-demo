@@ -1,9 +1,9 @@
 package com.example.githubbrowser;
 
-import com.example.githubbrowser.logic.SearchResultConverter;
-import com.example.githubbrowser.model.local.GitHubRepoDisplayItem;
-import com.example.githubbrowser.model.network.github.SearchResult;
-import com.example.githubbrowser.model.network.github.SearchResultItem;
+import com.example.githubbrowser.model.logic.SearchResultConverter;
+import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
+import com.example.githubbrowser.model.network.pojo.SearchResult;
+import com.example.githubbrowser.model.network.pojo.SearchResultItem;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

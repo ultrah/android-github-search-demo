@@ -15,7 +15,7 @@ public class AppApp extends Application {
         super.onCreate();
         sInstance = this;
 
-        // TODO not on prod
+        // TODO not for release builds
         Timber.plant(new Timber.DebugTree());
 
         mInjector = new Injector();

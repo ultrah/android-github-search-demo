@@ -3,7 +3,7 @@ package com.example.githubbrowser.viewmodel;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
-import com.example.githubbrowser.network.GitHubRepository;
+import com.example.githubbrowser.model.network.GitHubRepository;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
 

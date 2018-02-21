@@ -1,6 +1,6 @@
-package com.example.githubbrowser.network;
+package com.example.githubbrowser.model.network;
 
-import com.example.githubbrowser.model.network.github.SearchResult;
+import com.example.githubbrowser.model.network.pojo.SearchResult;
 
 public interface GitHubRepository {
 

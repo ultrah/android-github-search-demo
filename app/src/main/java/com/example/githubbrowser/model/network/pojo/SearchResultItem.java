@@ -1,4 +1,4 @@
-package com.example.githubbrowser.model.network.github;
+package com.example.githubbrowser.model.network.pojo;
 
 import com.google.gson.annotations.SerializedName;
 

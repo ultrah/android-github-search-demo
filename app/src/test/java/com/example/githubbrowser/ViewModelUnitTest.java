@@ -6,7 +6,6 @@ import android.arch.lifecycle.Observer;
 import com.example.githubbrowser.model.network.GitHubRepository;
 import com.example.githubbrowser.model.network.pojo.SearchResult;
 import com.example.githubbrowser.model.network.pojo.SearchResultItem;
-import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
 import com.example.githubbrowser.viewmodel.GitHubListViewModel;
 
 import org.junit.Rule;
@@ -16,12 +15,12 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
-import java.util.List;
 
 import io.reactivex.Single;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,7 +31,6 @@ public class ViewModelUnitTest {
 
     @Test
     public void shouldEmmitDataCorrectly() throws Exception {
-
         // Given a mocked git repository
         GitHubRepository mockRepo = new GitHubRepository() {
 
@@ -43,14 +41,15 @@ public class ViewModelUnitTest {
         };
 
         GitHubListViewModel viewModel = new GitHubListViewModel(mockRepo);
-        Observer<List<GitHubRepoDisplayItem>> mockObserver = mock(Observer.class);
-        viewModel.getDisplayItems().observeForever(mockObserver);
+        Observer<GitHubListViewModel.State> mockObserver = mock(Observer.class);
+        viewModel.getState().observeForever(mockObserver);
 
         // When a search request is made to the view model
         viewModel.searchRepos("Foobar");
 
-        // Then the list item is emitted correctly
-        verify(mockObserver).onChanged(any(List.class));
+        // Then the state should change two times
+        // TODO needs more thorough testing
+        verify(mockObserver, times(2)).onChanged(any(GitHubListViewModel.State.class));
     }
 
     private SearchResult getMockSearchResultItem() {

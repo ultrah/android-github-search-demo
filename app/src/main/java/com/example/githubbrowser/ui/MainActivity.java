@@ -45,46 +45,10 @@ public class MainActivity extends AppCompatActivity {
         // Get the ViewModel.
         mModel = ViewModelProviders.of(this, AppApp.getInjector().provideViewModelFactory()).get(GitHubListViewModel.class);
 
-        mModel.getBasicState().observe(this, new Observer<GitHubListViewModel.BasicState>() {
+        mModel.getState().observe(this, new Observer<GitHubListViewModel.State>() {
 
-            public void onChanged(@Nullable GitHubListViewModel.BasicState basicState) {
-                Timber.d("onChanged() %s", basicState.getState());
-
-                switch (basicState.getState()) {
-                    case IDLE:
-                        mTvStatus.setVisibility(View.GONE);
-                        mRecyclerView.setVisibility(View.GONE);
-                        mEditSearch.setText("");
-                        break;
-                    case SEARCHING:
-                        mTvStatus.setVisibility(View.VISIBLE);
-                        mTvStatus.setText("Hold on..");
-                        mRecyclerView.setVisibility(View.GONE);
-                        mEditSearch.setText(basicState.getKeywords());
-                        break;
-                    case DISPLAYING:
-                        mTvStatus.setVisibility(View.GONE);
-                        mRecyclerView.setVisibility(View.VISIBLE);
-                        mEditSearch.setText(basicState.getKeywords());
-                        break;
-                    case ERROR:
-                        mTvStatus.setVisibility(View.VISIBLE);
-                        mTvStatus.setText("CATASTROPHIC FATAL ERROR");
-                        mRecyclerView.setVisibility(View.GONE);
-                        mEditSearch.setText(basicState.getKeywords());
-                        break;
-                    default:
-                        throw new IllegalStateException("Unknown state" + basicState.getState());
-                }
-            }
-        });
-
-        mModel.getDisplayItems().observe(this, new Observer<List<GitHubRepoDisplayItem>>() {
-
-            public void onChanged(@Nullable List<GitHubRepoDisplayItem> gitHubRepos) {
-                Timber.d("onChanged()");
-                mAdapter.setItems(gitHubRepos);
-                mAdapter.notifyDataSetChanged();
+            public void onChanged(@Nullable GitHubListViewModel.State state) {
+                onStateChanged(state);
             }
         });
 
@@ -101,5 +65,46 @@ public class MainActivity extends AppCompatActivity {
 
         mAdapter = new GitHubRepoItemAdapter(Collections.<GitHubRepoDisplayItem>emptyList());
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void onStateChanged(GitHubListViewModel.State state) {
+        Timber.d("onChanged() %s", state.getStatus());
+
+        switch (state.getStatus()) {
+            case IDLE:
+                mTvStatus.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.GONE);
+                mEditSearch.setText("");
+                break;
+            case SEARCHING:
+                mTvStatus.setVisibility(View.VISIBLE);
+                mTvStatus.setText("Hold on..");
+                mRecyclerView.setVisibility(View.GONE);
+                mEditSearch.setText(state.getKeywords());
+                break;
+            case DISPLAYING:
+                List<GitHubRepoDisplayItem> items = state.getDisplayItems();
+                if (items.isEmpty()) {
+                    Timber.d("No items to display");
+                    mTvStatus.setVisibility(View.VISIBLE);
+                    mTvStatus.setText("No results");
+                    mRecyclerView.setVisibility(View.GONE);
+                } else {
+                    mTvStatus.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mAdapter.setItems(state.getDisplayItems());
+                    mAdapter.notifyDataSetChanged();
+                }
+                mEditSearch.setText(state.getKeywords());
+                break;
+            case ERROR:
+                mTvStatus.setVisibility(View.VISIBLE);
+                mTvStatus.setText("Error"); // This obviously should be more detailed
+                mRecyclerView.setVisibility(View.GONE);
+                mEditSearch.setText(state.getKeywords());
+                break;
+            default:
+                throw new IllegalStateException("Unknown state" + state.getStatus());
+        }
     }
 }

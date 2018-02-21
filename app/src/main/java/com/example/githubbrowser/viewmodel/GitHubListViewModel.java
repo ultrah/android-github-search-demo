@@ -8,9 +8,9 @@ import com.example.githubbrowser.model.network.GitHubRepository;
 import com.example.githubbrowser.model.network.pojo.SearchResult;
 import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
 
+import java.util.Collections;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -19,24 +19,25 @@ import timber.log.Timber;
 
 public class GitHubListViewModel extends ViewModel {
 
-    public enum State {
+    public enum Status {
         IDLE,
         SEARCHING,
         DISPLAYING,
         ERROR
     }
 
-    public class BasicState {
+    public class State {
 
-        State mState;
+        Status mStatus;
         String mKeywords;
+        List<GitHubRepoDisplayItem> mDisplayItems;
 
-        public State getState() {
-            return mState;
+        public Status getStatus() {
+            return mStatus;
         }
 
-        public BasicState setState(State state) {
-            mState = state;
+        public State setState(Status status) {
+            mStatus = status;
             return this;
         }
 
@@ -44,30 +45,34 @@ public class GitHubListViewModel extends ViewModel {
             return mKeywords;
         }
 
-        public BasicState setKeywords(String keywords) {
+        public State setKeywords(String keywords) {
             mKeywords = keywords;
+            return this;
+        }
+
+        public List<GitHubRepoDisplayItem> getDisplayItems() {
+            return mDisplayItems;
+        }
+
+        public State setDisplayItems(List<GitHubRepoDisplayItem> displayItems) {
+            mDisplayItems = displayItems;
             return this;
         }
     }
 
     private final GitHubRepository mGitHubRepository;
 
-    private final MutableLiveData<List<GitHubRepoDisplayItem>> mDisplayItems = new MutableLiveData<>();
-    private final MutableLiveData<BasicState> mState = new MutableLiveData<>();
+    private final MutableLiveData<State> mState = new MutableLiveData<>();
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     public GitHubListViewModel(GitHubRepository gitHubRepository) {
         super();
         mGitHubRepository = gitHubRepository;
-        mState.setValue(new BasicState().setState(State.IDLE));
+        mState.setValue(new State().setState(Status.IDLE));
     }
 
-    public MutableLiveData<List<GitHubRepoDisplayItem>> getDisplayItems() {
-        return mDisplayItems;
-    }
-
-    public MutableLiveData<BasicState> getBasicState() {
+    public MutableLiveData<State> getState() {
         return mState;
     }
 
@@ -77,11 +82,12 @@ public class GitHubListViewModel extends ViewModel {
             return;
         }
 
-        mState.setValue(mState.getValue().setKeywords(keywords).setState(State.SEARCHING));
+        mState.setValue(mState.getValue().setKeywords(keywords).setState(Status.SEARCHING));
         searchRepo(keywords);
     }
 
     private void searchRepo(String keywords) {
+        mDisposable.clear();
         mDisposable.add(mGitHubRepository.search(keywords)
                 .subscribeOn(Schedulers.io())
                 .map(new Function<SearchResult, List<GitHubRepoDisplayItem>>() {
@@ -93,14 +99,14 @@ public class GitHubListViewModel extends ViewModel {
                 }).subscribeWith(new DisposableSingleObserver<List<GitHubRepoDisplayItem>>() {
                     @Override
                     public void onSuccess(List<GitHubRepoDisplayItem> displayItems) {
-                        mDisplayItems.setValue(displayItems);
-                        mState.setValue(mState.getValue().setState(State.DISPLAYING));
+                        Timber.d("onSuccess()");
+                        mState.postValue(mState.getValue().setState(Status.DISPLAYING).setDisplayItems(displayItems));
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mDisplayItems.setValue(null);
-                        mState.setValue(mState.getValue().setState(State.ERROR));
+                        Timber.d("onError()");
+                        mState.postValue(mState.getValue().setState(Status.ERROR).setDisplayItems(Collections.<GitHubRepoDisplayItem>emptyList()));
                     }
                 }));
     }

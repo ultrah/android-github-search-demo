@@ -3,11 +3,10 @@ package com.example.githubbrowser;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 
-import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
+import com.example.githubbrowser.model.network.GitHubRepository;
 import com.example.githubbrowser.model.network.pojo.SearchResult;
 import com.example.githubbrowser.model.network.pojo.SearchResultItem;
-import com.example.githubbrowser.model.network.GitHubRepository;
-import com.example.githubbrowser.model.network.ResponseListener;
+import com.example.githubbrowser.model.pojo.GitHubRepoDisplayItem;
 import com.example.githubbrowser.viewmodel.GitHubListViewModel;
 
 import org.junit.Rule;
@@ -18,6 +17,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
+
+import io.reactivex.Single;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -31,22 +32,28 @@ public class ViewModelUnitTest {
 
     @Test
     public void shouldEmmitDataCorrectly() throws Exception {
+
+        // Given a mocked git repository
         GitHubRepository mockRepo = new GitHubRepository() {
+
             @Override
-            public void search(String keywords, ResponseListener<SearchResult> responseListener) {
-                // Not async
-                responseListener.onResponse(getMockResult());
+            public Single<SearchResult> search(String keywords) {
+                return Single.just(getMockSearchResultItem());
             }
         };
 
         GitHubListViewModel viewModel = new GitHubListViewModel(mockRepo);
         Observer<List<GitHubRepoDisplayItem>> mockObserver = mock(Observer.class);
         viewModel.getDisplayItems().observeForever(mockObserver);
+
+        // When a search request is made to the view model
         viewModel.searchRepos("Foobar");
+
+        // Then the list item is emitted correctly
         verify(mockObserver).onChanged(any(List.class));
     }
 
-    private SearchResult getMockResult() {
+    private SearchResult getMockSearchResultItem() {
         SearchResultItem item = new SearchResultItem();
         item.setId(1);
         item.setForks(2);

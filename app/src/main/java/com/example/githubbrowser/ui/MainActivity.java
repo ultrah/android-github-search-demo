@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         mModel.getBasicState().observe(this, new Observer<GitHubListViewModel.BasicState>() {
 
             public void onChanged(@Nullable GitHubListViewModel.BasicState basicState) {
+                Timber.d("onChanged() %s", basicState.getState());
+
                 switch (basicState.getState()) {
                     case IDLE:
                         mTvStatus.setVisibility(View.GONE);
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case SEARCHING:
                         mTvStatus.setVisibility(View.VISIBLE);
+                        mTvStatus.setText("Hold on..");
                         mRecyclerView.setVisibility(View.GONE);
                         mEditSearch.setText(basicState.getKeywords());
                         break;
@@ -65,9 +68,13 @@ public class MainActivity extends AppCompatActivity {
                         mEditSearch.setText(basicState.getKeywords());
                         break;
                     case ERROR:
-                        //TODO HANDLE ERROR STATE
+                        mTvStatus.setVisibility(View.VISIBLE);
+                        mTvStatus.setText("CATASTROPHIC FATAL ERROR");
+                        mRecyclerView.setVisibility(View.GONE);
+                        mEditSearch.setText(basicState.getKeywords());
+                        break;
                     default:
-                        throw new IllegalStateException("Unknown state");
+                        throw new IllegalStateException("Unknown state" + basicState.getState());
                 }
             }
         });
@@ -75,8 +82,9 @@ public class MainActivity extends AppCompatActivity {
         mModel.getDisplayItems().observe(this, new Observer<List<GitHubRepoDisplayItem>>() {
 
             public void onChanged(@Nullable List<GitHubRepoDisplayItem> gitHubRepos) {
-                Timber.d("onChanged() -> %s", gitHubRepos.size());
-                onItemsReceived(gitHubRepos);
+                Timber.d("onChanged()");
+                mAdapter.setItems(gitHubRepos);
+                mAdapter.notifyDataSetChanged();
             }
         });
 
@@ -93,14 +101,5 @@ public class MainActivity extends AppCompatActivity {
 
         mAdapter = new GitHubRepoItemAdapter(Collections.<GitHubRepoDisplayItem>emptyList());
         mRecyclerView.setAdapter(mAdapter);
-    }
-
-    private void onItemsReceived(List<GitHubRepoDisplayItem> gitHubRepos) {
-        // TODO null check
-        // TODO empty list check
-        mAdapter.setItems(gitHubRepos);
-        mAdapter.notifyDataSetChanged();
-        mRecyclerView.setVisibility(View.VISIBLE);
-        mTvStatus.setVisibility(View.GONE);
     }
 }

@@ -4,45 +4,35 @@ import com.example.githubbrowser.model.network.pojo.SearchResult;
 
 import java.io.IOException;
 
+import io.reactivex.Single;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GitHubNetworkRepository implements GitHubRepository {
 
-    public static final String BASE_URL = "https://api.github.com/";
+    private static final String BASE_URL = "https://api.github.com/";
     private static GitHubNetworkRepository sInstance;
 
     private GitHubService mService;
 
     @Override
-    public void search(String keywords, final ResponseListener<SearchResult> responseListener) {
+    public Single<SearchResult> search(String keywords) {
         if (mService == null) {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(createOkHttpClient())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();
 
             mService = retrofit.create(GitHubService.class);
         }
 
-        mService.search(keywords).enqueue(new Callback<SearchResult>() {
-            @Override
-            public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
-                responseListener.onResponse(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<SearchResult> call, Throwable t) {
-                responseListener.onResponse(null);
-            }
-        });
+        return mService.search(keywords);
     }
 
     public static GitHubRepository getInstance() {

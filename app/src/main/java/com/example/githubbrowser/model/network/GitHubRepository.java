@@ -2,7 +2,9 @@ package com.example.githubbrowser.model.network;
 
 import com.example.githubbrowser.model.network.pojo.SearchResult;
 
+import io.reactivex.Single;
+
 public interface GitHubRepository {
 
-    void search(String keywords, ResponseListener<SearchResult> responseListener);
+    Single<SearchResult> search(String keywords);
 }

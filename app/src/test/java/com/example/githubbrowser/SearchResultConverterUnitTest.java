@@ -19,11 +19,11 @@ public class SearchResultConverterUnitTest {
 
     @Test
     public void shouldConvertData() throws Exception {
-        List<GitHubRepoDisplayItem> listItems = SearchResultConverter.convert(getMockResult().getItems());
+        List<GitHubRepoDisplayItem> listItems = SearchResultConverter.convert(getMockSearchResultItem().getItems());
         assertEquals(listItems.get(0).getScore(), 2 * 3 * 4);
     }
 
-    private SearchResult getMockResult() {
+    private SearchResult getMockSearchResultItem() {
         SearchResultItem item = new SearchResultItem();
         item.setId(1);
         item.setForks(2);
